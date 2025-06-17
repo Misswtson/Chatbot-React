@@ -1,7 +1,41 @@
+import { useState } from "react";
 import ChatbotIcon from "./components/ChatbotIcon"
 import ChatForm from "./components/ChatForm"
+import ChatMessage from "./components/ChatMessage";
 
 const App = () => {
+
+  const [ChatHistory, setChatHistory] = useState([]);
+// Helper function to update chat history
+  const generateBotResponse = async (history) => {
+  //Format chat history for API request
+  const updateHistory = (text) => {
+    setChatHistory(prev => [...prev.filter(msg => msg.text !== "Typing..."), {role: "model", text}]);
+  }
+  // Format chat history for API request
+  history = history.map(({role, text })=> ({role, parts: [{text}]}));
+
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json"},
+    body: JSON.stringify({ contents: history}),
+  }
+
+  try{
+    //Make de API call to get the bot's response
+    const response = await fetch(import.meta.env.VITE_API_URL, requestOptions);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error.message || "Something went wrong");
+    // Update chat history with the bot's response
+    const apiResponseText = data.candidates[0].content.parts[0].text.replace(/<[^>]*>/g, "$1").trim();
+    updateHistory(apiResponseText);
+  } catch (error) {
+    console.log(error)
+
+  }
+  
+};
+
   return (
     <div className="container">
       <div className="chatbot-popup"> 
@@ -21,14 +55,14 @@ const App = () => {
             Hey there! <br/> How can I help you?
             </p> 
           </div>
-          <div className="message user-message">
-          <p className="message-text">Lorem ipsunm dolor sit amet, consectetur adipiscing elit.
-            </p> 
-          </div>
+  {/* Render the chat history */ }
+          {ChatHistory.map((chat, index) => (
+  <ChatMessage key={index} chat={chat}/>
+          ))}
         </div>
          {/* Chatbot Footer */ }
         <div className="chat-footer"> 
-<ChatForm />
+<ChatForm ChatHistory={ChatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse}/>
         </div>
       </div>
       </div>
