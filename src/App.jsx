@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatbotIcon from "./components/ChatbotIcon"
 import ChatForm from "./components/ChatForm"
 import ChatMessage from "./components/ChatMessage";
 
 const App = () => {
+  const [chatHistory, setChatHistory] = useState([]);
+const chatBodyRef = useRef();
 
-  const [ChatHistory, setChatHistory] = useState([]);
-// Helper function to update chat history
   const generateBotResponse = async (history) => {
-  //Format chat history for API request
+  // Helper function to update chat history
   const updateHistory = (text) => {
     setChatHistory(prev => [...prev.filter(msg => msg.text !== "Typing..."), {role: "model", text}]);
   }
@@ -36,6 +36,10 @@ const App = () => {
   
 };
 
+useEffect(() => {
+
+}, [chatHistory])
+
   return (
     <div className="container">
       <div className="chatbot-popup"> 
@@ -48,7 +52,7 @@ const App = () => {
           <button className="material-symbols-rounded">keyboard_arrow_down</button>
         </div>
   {/* Chatbot Body */ }
-        <div className="chat-body"> 
+        <div  ref={chatBodyRef} className="chat-body"> 
           <div className="message bot-message">
           <ChatbotIcon/>
           <p className="message-text">
@@ -56,13 +60,13 @@ const App = () => {
             </p> 
           </div>
   {/* Render the chat history */ }
-          {ChatHistory.map((chat, index) => (
+          {chatHistory.map((chat, index) => (
   <ChatMessage key={index} chat={chat}/>
           ))}
         </div>
          {/* Chatbot Footer */ }
         <div className="chat-footer"> 
-<ChatForm ChatHistory={ChatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse}/>
+<ChatForm ChatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse}/>
         </div>
       </div>
       </div>

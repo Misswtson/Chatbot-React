@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 
  {/* Chat From Component */ }
 
-const ChatForm = ({ChatHistory, setChatHistory, generateBotResponse}) => {
+const ChatForm = ({chatHistory, setChatHistory, generateBotResponse}) => {
 
     const inputRef = useRef();
     const handleFormSubmit = (e) => {
@@ -17,7 +17,7 @@ const ChatForm = ({ChatHistory, setChatHistory, generateBotResponse}) => {
              // Add a "Typing..." placeholder for the bot's response
             setChatHistory((history) => [...history, { role: "model", text: "Typing..." }]);
         // Call function to generate the bot's response
-        generateBotResponse([...ChatHistory, { role: "user", text: userMessage }]);
+        generateBotResponse([...chatHistory, { role: "user", text: userMessage }]);
     },  600);
 
 }; 
