@@ -43,6 +43,10 @@ chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "
 
   return (
     <div className="container">
+      <button id="chatbot-toggler">
+        <span className="material-symbols-rounded">mode_comment</span>
+        <span className="material-symbols-rounded">close</span>
+      </button>
       <div className="chatbot-popup"> 
         {/* Chatbot Header */ }
         <div className="chat-header">
