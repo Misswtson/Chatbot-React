@@ -37,8 +37,9 @@ const chatBodyRef = useRef();
 };
 
 useEffect(() => {
-
-}, [chatHistory])
+// Auto-scroll whenever chat history updates
+chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "smooth"});
+}, [chatHistory]);
 
   return (
     <div className="container">
@@ -66,7 +67,7 @@ useEffect(() => {
         </div>
          {/* Chatbot Footer */ }
         <div className="chat-footer"> 
-<ChatForm ChatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse}/>
+<ChatForm chatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse}/>
         </div>
       </div>
       </div>
