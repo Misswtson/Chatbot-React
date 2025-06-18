@@ -1,6 +1,6 @@
 # React Chatbot 
 
-Chatbot clone using openAPI
+Gemini API integration Chatbot clone
 
 1. Clonar o instalar
 2. Ejecutar el comando:
