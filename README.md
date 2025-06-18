@@ -1,6 +1,6 @@
 # React Chatbot 
 
-This app helps to search new gifs
+Chatbot clone using openAPI
 
 1. Clonar o instalar
 2. Ejecutar el comando:
