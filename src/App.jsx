@@ -4,13 +4,14 @@ import ChatForm from "./components/ChatForm"
 import ChatMessage from "./components/ChatMessage";
 
 const App = () => {
-  const [chatHistory, setChatHistory] = useState([]);
+const [chatHistory, setChatHistory] = useState([]);
+const [showChatbot, setShowChatbot] = useState([false]);
 const chatBodyRef = useRef();
 
-  const generateBotResponse = async (history) => {
+const generateBotResponse = async (history) => {
   // Helper function to update chat history
-  const updateHistory = (text) => {
-    setChatHistory(prev => [...prev.filter(msg => msg.text !== "Typing..."), {role: "model", text}]);
+  const updateHistory = (text, isError = false) => {
+    setChatHistory(prev => [...prev.filter(msg => msg.text !== "Typing..."), {role: "model", text, isError}]);
   }
   // Format chat history for API request
   history = history.map(({role, text })=> ({role, parts: [{text}]}));
@@ -30,7 +31,8 @@ const chatBodyRef = useRef();
     const apiResponseText = data.candidates[0].content.parts[0].text.replace(/<[^>]*>/g, "$1").trim();
     updateHistory(apiResponseText);
   } catch (error) {
-    console.log(error)
+  // If an error occurs, update chat history with the error message
+    updateHistory(error.message, true);
 
   }
   
@@ -41,22 +43,25 @@ useEffect(() => {
 chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "smooth"});
 }, [chatHistory]);
 
+
   return (
-    <div className="container">
-      <button id="chatbot-toggler">
+    <div className={`container ${showChatbot ? "show-chatbot" : ""}`}>
+      <button onClick={() => setShowChatbot(prev => !prev)} id="chatbot-toggler">
         <span className="material-symbols-rounded">mode_comment</span>
         <span className="material-symbols-rounded">close</span>
       </button>
+
       <div className="chatbot-popup"> 
-        {/* Chatbot Header */ }
+{/* Chatbot Header */ }
         <div className="chat-header">
           <div className="header-info">
             <ChatbotIcon/>
           <h2 className="logo-text">Chatbot</h2>         
           </div>
-          <button className="material-symbols-rounded">keyboard_arrow_down</button>
+          <button onClick={() => setShowChatbot(prev => !prev)} 
+             className="material-symbols-rounded">keyboard_arrow_down</button>
         </div>
-  {/* Chatbot Body */ }
+{/* Chatbot Body */ }
         <div  ref={chatBodyRef} className="chat-body"> 
           <div className="message bot-message">
           <ChatbotIcon/>
@@ -64,13 +69,13 @@ chatBodyRef.current.scrollTo({top: chatBodyRef.current.scrollHeight, behavior: "
             Hey there! <br/> How can I help you?
             </p> 
           </div>
-  {/* Render the chat history */ }
-          {chatHistory.map((chat, index) => (
+{/* Render the chat history */ }
+{chatHistory.map((chat, index) => (
   <ChatMessage key={index} chat={chat}/>
-          ))}
-        </div>
-         {/* Chatbot Footer */ }
-        <div className="chat-footer"> 
+))}
+</div>
+{/* Chatbot Footer */ }
+<div className="chat-footer"> 
 <ChatForm chatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse}/>
         </div>
       </div>
